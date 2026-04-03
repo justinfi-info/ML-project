@@ -1,57 +1,58 @@
-import os
 import sys
-from dataclasses import dataclass
-
-import numpy as np
 import pandas as pd
-
+import os
 from src.exception import CustomException
 from src.utils import load_object
 
-
-@dataclass
-class PredictPipelineConfig:
-    preprocessor_path: str = os.path.join("artifacts", "preprocessor.pkl")
-    model_path: str = os.path.join("artifacts", "model.pkl")
-
-
 class PredictPipeline:
-    def __init__(self, config: PredictPipelineConfig | None = None):
-        self.config = config or PredictPipelineConfig()
+    def __init__(self):
+        pass
 
-    def predict(self, features: pd.DataFrame) -> np.ndarray:
+    def predict(self, features):
         try:
-            preprocessor = load_object(self.config.preprocessor_path)
-            model = load_object(self.config.model_path)
-
+            model_path = os.path.join('artifacts', 'model.pkl')
+            preprocessor_path = os.path.join('artifacts', 'preprocessor.pkl')
+            model = load_object(file_path = model_path)
+            preprocessor = load_object(file_path=preprocessor_path)
             data_scaled = preprocessor.transform(features)
-            preds = model.predict(data_scaled)
-            return np.asarray(preds)
+            pred = model.predict(data_scaled)
+            return pred
+        
         except Exception as e:
             raise CustomException(e, sys)
 
 
-@dataclass
-class CustomData:
-    gender: str
-    race_ethnicity: str
-    parental_level_of_education: str
-    lunch: str
-    test_preparation_course: str
-    reading_score: float
-    writing_score: float
+Class CustomData:
+    def __init__(self,
+        gender: str,
+        ethnicity: str,
+        parental_level_of_education: str,
+        lunch: str,
+        test_preparation_course: str,
+        reading_score: int,
+        writing_score: int
+    ):
+        self.gender = gender
+        self.ethnicity = ethnicity
+        self.parental_level_of_education = parental_level_of_education
+        self.lunch = lunch
+        self.test_preparation_course = test_preparation_course
+        self.reading_score = reading_score
+        self.writing_score = writing_score
 
-    def to_dataframe(self) -> pd.DataFrame:
+    def get_data_as_dataframe(self):
         try:
-            data = {
+            custom_data_input_dict = {
                 "gender": [self.gender],
-                "race_ethnicity": [self.race_ethnicity],
+                "race/ethnicity": [self.ethnicity],
                 "parental_level_of_education": [self.parental_level_of_education],
                 "lunch": [self.lunch],
                 "test_preparation_course": [self.test_preparation_course],
-                "reading_score": [float(self.reading_score)],
-                "writing_score": [float(self.writing_score)],
+                "reading_score": [self.reading_score],
+                "writing_score": [self.writing_score]
             }
-            return pd.DataFrame(data)
+
+            return pd.DataFrame(custom_data_input_dict)
+
         except Exception as e:
             raise CustomException(e, sys)
