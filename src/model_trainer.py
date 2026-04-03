@@ -97,18 +97,16 @@ class ModelTrainer:
             model_report:dict = evaluate_models(X_train=X_train, y_train=y_train, X_test=X_test,
                                                  y_test=y_test, models=models, param=param)
             
-            # To get the best model score from the dictionary
-            best_model_score = max(sorted(model_report.values()))
-
-            # To get the best model name from the dictionary
-            best_model_name = list(model_report.keys())[
-                list(model_report.values()).index(best_model_score)
-            ]
+            # model_report values are (test_score, best_params)
+            best_model_name, (best_model_score, best_params) = max(
+                model_report.items(),
+                key=lambda item: item[1][0]
+            )
 
             best_model = models[best_model_name]
 
             if best_model_score < 0.6:
-                raise CustomException("No best model found")
+                raise CustomException("No best model found", sys)
             
             logging.info(f"Best found model on both training and testing dataset: {best_model_name}")
 
