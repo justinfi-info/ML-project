@@ -39,12 +39,63 @@ class ModelTrainer:
                 "Gradient Boosting": GradientBoostingRegressor(),
                 "Linear Regression": LinearRegression(),
                 "K-Neighbors Regressor": KNeighborsRegressor(),
+                "AdaBoost Regressor": AdaBoostRegressor(),
                 "XGBRegressor": XGBRegressor(),
                 "CatBoosting Regressor": CatBoostRegressor(verbose=False)
             }
 
+            param = {
+                "Decision Tree": {
+                    'criterion': ['squared_error', 'friedman_mse', 'absolute_error', 'poisson']
+                },
+                # 'Splitter': ['best', 'random'],
+                # 'Max Features': ['sqrt', 'log2'],
+
+                "Random Forest": {
+                    'n_estimators': [8, 16, 32, 64, 128, 256]
+                },
+                # 'Criterion': ['squared_error', 'friedman_mse', 'absolute_error', 'poisson'],
+                # 'Max Features': ['sqrt', 'log2'],
+
+                "Gradient Boosting": {
+                    'learning_rate': [.1, .01, .05, .001],
+                    'n_estimators': [8, 16, 32, 64, 128, 256]
+                },
+                # 'loss': ['Squared_error', 'huber', 'absolute_error', 'quantile'],
+                # 'Criterion': ['squared_error', 'friedman_mse'],
+                # 'Max Features': ['auto', 'sqrt', 'log2'],
+
+                "Linear Regression": {},
+                "K-Neighbors Regressor": {
+                    'n_neighbors': [5, 7, 9, 11],
+                    'weights': ['uniform', 'distance']
+                },
+                # 'weights': ['uniform', 'distance'],
+                # 'algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute'],
+
+                "XGBRegressor": {
+                    'learning_rate': [.1, .01, .05, .001],
+                    'n_estimators': [8, 16, 32, 64, 128, 256]
+                },
+                # 'booster': ['gbtree', 'gblinear'],
+
+                "CatBoosting Regressor": {
+                    'learning_rate': [.1, .01, .05, .001],
+                    'depth': [6, 8, 10]
+                },
+                # 'iterations': [30, 50, 100],
+                # 'depth': [6, 8, 10],
+                # 'learning_rate': [.1, .01, .05, .001]
+                 
+                "AdaBoost Regressor": {
+                'learning_rate': [.1, .01, .05, .001],
+                'n_estimators': [8, 16, 32, 64, 128, 256]
+                }
+            # 'loss': ['linear', 'square', 'exponential']
+            }
+
             model_report:dict = evaluate_models(X_train=X_train, y_train=y_train, X_test=X_test,
-                                                 y_test=y_test, models=models)
+                                                 y_test=y_test, models=models, param=param)
             
             # To get the best model score from the dictionary
             best_model_score = max(sorted(model_report.values()))

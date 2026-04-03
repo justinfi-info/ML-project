@@ -23,13 +23,14 @@ class DataTransformation:
         '''This function is responsible for data transformation'''
 
         try:
-            numerical_columns = ['math score', 'reading score', 'writing score']
+            # Target column `math_score` is predicted, so it must not be included in features.
+            numerical_columns = ['reading_score', 'writing_score']
             categorical_columns = [
                 'gender',
                 'race_ethnicity',
-                'parental level of education',
+                'parental_level_of_education',
                 'lunch',
-                'test preparation course'
+                'test_preparation_course'
             ]
 
             num_pipeline = Pipeline(
@@ -72,13 +73,12 @@ class DataTransformation:
 
             preprocessor_obj = self.get_data_transformer_object()
 
-            target_column_name = 'math score'
-            numerical_columns = ['math score', 'reading score', 'writing score']
+            target_column_name = 'math_score'
 
-            input_feature_train_df = train_df.drop(columns=[target_column_name], axis=1)
+            input_feature_train_df = train_df.drop(columns=[target_column_name])
             target_feature_train_df = train_df[target_column_name]
 
-            input_feature_test_df = test_df.drop(columns=[target_column_name], axis=1)
+            input_feature_test_df = test_df.drop(columns=[target_column_name])
             target_feature_test_df = test_df[target_column_name]
 
             logging.info(

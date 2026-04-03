@@ -1,23 +1,27 @@
 import os
 import sys
-from src.exception import CustomException
-from src.logger import logging
-import pandas as pd
-
-from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
 
+# Allow running this file directly (e.g. `python src/data_ingestion.py`) while still
+# supporting package-style imports like `from src...`.
+if __name__ == "__main__" and (__package__ is None or __package__ == ""):
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+
+from src.exception import CustomException
+from src.logger import logging
 from src.data_transfomation import DataTransformation
-from src.data_transfomation import DataTransformationConfig
 
 from src.model_trainer import ModelTrainer
-from src.model_trainer import ModelTrainerConfig
 
 @dataclass
 class DataIngestionConfig:
     train_data_path: str = os.path.join('artifacts', 'train.csv')
     test_data_path: str = os.path.join('artifacts', 'test.csv')
     raw_data_path: str = os.path.join('artifacts', 'data.csv')
+    source_data_path: str = os.path.join('notebook', 'data', 'stud.csv')
 
 class DataIngestion:
     def __init__(self):
@@ -26,7 +30,13 @@ class DataIngestion:
     def initiate_data_ingestion(self):
         logging.info("Entered the data ingestion method or component")
         try:
-            df = pd.read_csv('stud.csv')
+            if not os.path.exists(self.ingestion_config.source_data_path):
+                raise FileNotFoundError(
+                    f"Dataset not found at '{self.ingestion_config.source_data_path}'. "
+                    "Expected `notebook/data/stud.csv`."
+                )
+
+            df = pd.read_csv(self.ingestion_config.source_data_path)
             logging.info("Read the dataset as dataframe")
 
             os.makedirs(os.path.dirname(self.ingestion_config.train_data_path), exist_ok=True)
